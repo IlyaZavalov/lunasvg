@@ -349,16 +349,9 @@ static void composition_source_over(uint32_t* dest, int length, const uint32_t* 
     {
         for(int i = 0;i < length;i++)
         {
-            uint32_t source_alpha = plutovg_alpha(src[i]) * const_alpha / 255;
-            uint32_t dest_alpha   = plutovg_alpha(dest[i]);
-            uint32_t common_alpha = source_alpha + (255 - source_alpha) * dest_alpha / 255;
-            if (common_alpha == 0) {
-                continue;
-            }
-            uint32_t color = BYTE_MUL(dest[i], 255 * dest_alpha / common_alpha) + BYTE_MUL(src[i], 255 * source_alpha / common_alpha);
-            color &= 0x00ffffffu;
-            color |= common_alpha << 24;
-            dest[i] = color;
+            s = BYTE_MUL(src[i], const_alpha);
+            sia = plutovg_alpha(~s);
+            dest[i] = s + BYTE_MUL(dest[i], sia);
         }
     }
 }
